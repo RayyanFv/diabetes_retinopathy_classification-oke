@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Send Recommendation{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4">Send Recommendation</h1>
+    <form id="recommendation-form">
+        <div class="form-group">
+            <label for="user-select">Select User</label>
+            <select class="form-control" id="user-select" required>
+                <option value="">Select a user</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="recommendation">Recommendation</label>
+            <textarea class="form-control" id="recommendation" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="warning">Warning</label>
+            <textarea class="form-control" id="warning" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="date-picker">Select Date</label>
+            <input type="date" class="form-control" id="date-picker" required>
+        </div>
+        <div class="form-group">
+            <label for="image-upload">Select Image</label>
+            <input type="file" class="form-control-file" id="image-upload">
+        </div>
+        <button type="submit" class="btn btn-primary">Send Data</button>
+    </form>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCGVOkrrWF0x9_TQzEeNLY9YjXlWQCZwNo",
+        authDomain: "my-untitled-project-a490d.firebaseapp.com",
+        projectId: "my-untitled-project-a490d",
+        storageBucket: "my-untitled-project-a490d.appspot.com",
+        messagingSenderId: "254402062831",
+        appId: "1:254402062831:web:0ad7ebf2e1999f41d66e1a",
+        measurementId: "G-TC1XP8Z7GL"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        const userSelect = document.getElementById('user-select');
+        const usersSnapshot = await db.collection('users').get();
+        usersSnapshot.forEach(doc => {
+            const user = doc.data();
+            const option = document.createElement('option');
+            option.value = doc.id;
+            option.textContent = user.username;
+            userSelect.appendChild(option);
+        });
+    });
+
+    document.getElementById('recommendation-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const selectedUser = document.getElementById('user-select').value;
+        const recommendation = document.getElementById('recommendation').value;
+        const warning = document.getElementById('warning').value;
+        const selectedDate = document.getElementById('date-picker').value;
+        const imageUpload = document.getElementById('image-upload').files[0];
+
+        let uploadedImageUrl = null;
+
+        if (imageUpload) {
+            const storageRef = storage.ref().child('recommendation_images/' + Date.now() + '_' + imageUpload.name);
+            await storageRef.put(imageUpload);
+            uploadedImageUrl = await storageRef.getDownloadURL();
+        }
+
+        try {
+            const recommendationDoc = await db.collection('recommendations').add({
+                uid: selectedUser,
+                recommendation: recommendation,
+                date: new Date(selectedDate),
+            });
+
+            if (uploadedImageUrl) {
+                await db.collection('images').add({
+                    uid: selectedUser,
+                    recommendationId: recommendationDoc.id,
+                    imageUrl: uploadedImageUrl,
+                    date: new Date(selectedDate),
+                });
+            }
+
+            await db.collection('warnings').add({
+                uid: selectedUser,
+                warning: warning,
+            });
+
+            alert('Data sent successfully!');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error saving to Firestore: ', error);
+            alert('Failed to send data');
+        }
+    });
+</script>
+{% endblock %}

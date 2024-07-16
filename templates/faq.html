@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - Diabetic Retinopathy Classification Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Frequently Asked Questions</h1>
+    <div class="accordion" id="faqAccordion">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        What is Diabetic Retinopathy?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#faqAccordion">
+                <div class="card-body">
+                    Diabetic retinopathy is a diabetes complication that affects eyes. It's caused by damage to the blood vessels of the light-sensitive tissue at the back of the eye (retina).
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        How is Diabetic Retinopathy diagnosed?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#faqAccordion">
+                <div class="card-body">
+                    Diabetic retinopathy is diagnosed through a comprehensive eye examination. This includes a visual acuity test, a dilated eye exam, and imaging tests of the retina.
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Can Diabetic Retinopathy be treated?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#faqAccordion">
+                <div class="card-body">
+                    Yes, diabetic retinopathy can be treated. Treatment options include laser surgery, vitrectomy, and injection of medications into the eye. Early detection and treatment can reduce the risk of vision loss.
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingFour">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        How can I prevent Diabetic Retinopathy?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#faqAccordion">
+                <div class="card-body">
+                    To prevent diabetic retinopathy, control your blood sugar, blood pressure, and cholesterol levels. Have a comprehensive dilated eye exam at least once a year. Quit smoking and follow your doctor's instructions for managing diabetes.
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingFive">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                        How to Use RetinoCapture?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#faqAccordion">
+                <div class="card-body">
+                    <ol>
+                        <li><strong>Home:</strong> The landing page of the application. Provides an overview and key information about diabetic retinopathy and the purpose of RetinoCapture.</li>
+                        <li><strong>Analysis:</strong> This section provides real-time analysis using your device's camera to capture images and analyze them instantly.</li>
+                        <li><strong>Upload Image:</strong> Upload retinal images from your device to get a detailed analysis and prediction. The results will be displayed along with the confidence score.</li>
+                        <li><strong>Send User:</strong> Submit user details for further analysis and record-keeping.</li>
+                        <li><strong>FAQ:</strong> Frequently Asked Questions section to help you understand more about diabetic retinopathy and how to use the application.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

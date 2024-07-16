@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Diabetic Retinopathy Classification Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="row">
+                <div class="col-lg-12">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="jumbotron mt-4 p-5 text-white rounded bg-dark">
+        <div class="row">
+            <div class="col-md-7 px-0">
+                <h1 class="display-4 text-white">Hello, dr. Shaffa Zammara</h1>
+                <p class="lead my-3 text-white">Welcome to RetinoCapture, a powerful tool for detecting diabetic retinopathy using advanced deep learning algorithms.</p>
+                <p class="lead mb-0"><a href="{{ url_for('upload') }}" class="btn btn-primary btn-lg">Get Started</a></p>
+            </div>
+            <div class="col-md-5">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" class="img-fluid rounded" alt="Hero Image">
+            </div>
+        </div>
+    </div>
+
+    <div class="row featurette">
+        <div class="col-md-7">
+            <h2 class="featurette-heading">What is Diabetic Retinopathy? <span class="text-muted">Learn more about it.</span></h2>
+            <p class="lead">Diabetic retinopathy is a diabetes complication that affects eyes. It's caused by damage to the blood vessels of the light-sensitive tissue at the back of the eye (retina).</p>
+        </div>
+        <div class="col-md-5">
+            <img src="{{ url_for('static', filename='images/show-1.png') }}" class="featurette-image img-fluid mx-auto" alt="Diabetic Retinopathy">
+        </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="row featurette">
+        <div class="col-md-7 order-md-2">
+            <h2 class="featurette-heading">How We Help. <span class="text-muted">Our solution.</span></h2>
+            <p class="lead">Using state-of-the-art deep learning models, RetinoCapture helps detect diabetic retinopathy with high accuracy, enabling early intervention and better management of the condition.</p>
+        </div>
+        <div class="col-md-5 order-md-1">
+            <img src="{{ url_for('static', filename='images/show-2.png') }}" class="featurette-image img-fluid mx-auto" alt="Deep Learning">
+        </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="row featurette">
+        <div class="col-md-7">
+            <h2 class="featurette-heading">Get Started Today. <span class="text-muted">It's easy.</span></h2>
+            <p class="lead">Upload your retinal images and let our model analyze them. With just a few clicks, you'll have a comprehensive analysis ready for review.</p>
+        </div>
+        <div class="col-md-5">
+            <img src="{{ url_for('static', filename='images/show-3.png') }}" class="featurette-image img-fluid mx-auto" alt="Upload Image">
+        </div>
+    </div>
+</div>
+{% endblock %}

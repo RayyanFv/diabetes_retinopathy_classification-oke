@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - Diabetic Retinopathy Classification Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4">Chat</h1>
+    <div id="chat-messages" class="chat-container"></div>
+    <div class="input-group mt-3">
+        <input type="text" id="message-input" class="form-control" placeholder="Send a message...">
+        <div class="input-group-append">
+            <button class="btn btn-primary" id="send-button">Send</button>
+        </div>
+    </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+    const otherUserId = "{{ other_user_id }}";
+    const userId = "{{ user_id }}";
+    const chatId = "{{ chat_id }}";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCGVOkrrWF0x9_TQzEeNLY9YjXlWQCZwNo",
+        authDomain: "my-untitled-project-a490d.firebaseapp.com",
+        projectId: "my-untitled-project-a490d",
+        storageBucket: "my-untitled-project-a490d.appspot.com",
+        messagingSenderId: "254402062831",
+        appId: "1:254402062831:web:0ad7ebf2e1999f41d66e1a",
+        measurementId: "G-TC1XP8Z7GL"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function fetchMessages() {
+        db.collection('private_chats').doc(chatId).collection('messages').orderBy('createdAt', 'asc')
+            .onSnapshot((snapshot) => {
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.innerHTML = '';
+                snapshot.forEach((doc) => {
+                    const message = doc.data();
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message-bubble');
+                    if (message.userId === userId) {
+                        messageElement.classList.add('sent');
+                    } else {
+                        messageElement.classList.add('received');
+                    }
+                    messageElement.innerText = message.text;
+                    chatMessages.appendChild(messageElement);
+                });
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+    }
+
+    document.getElementById('send-button').addEventListener('click', () => {
+        const messageInput = document.getElementById('message-input');
+        if (messageInput.value.trim() !== '') {
+            db.collection('private_chats').doc(chatId).collection('messages').add({
+                text: messageInput.value,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                userId: userId
+            });
+            messageInput.value = '';
+        }
+    });
+
+    fetchMessages();
+</script>
+<style>
+    .chat-container {
+        height: 400px;
+        overflow-y: scroll;
+        padding: 10px;
+        background-color: #f4f4f4;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message-bubble {
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 15px;
+        max-width: 60%;
+        word-wrap: break-word;
+        display: inline-block;
+        position: relative;
+    }
+
+    .message-bubble.sent {
+        background-color: #dcf8c6;
+        align-self: flex-end;
+        text-align: right;
+    }
+
+    .message-bubble.received {
+        background-color: #fff;
+        align-self: flex-start;
+        text-align: left;
+    }
+
+    .message-bubble.sent::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: -15px;
+        width: 0;
+        height: 0;
+        border-top: 15px solid #dcf8c6;
+        border-left: 15px solid transparent;
+    }
+
+    .message-bubble.received::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -15px;
+        width: 0;
+        height: 0;
+        border-top: 15px solid #fff;
+        border-right: 15px solid transparent;
+    }
+</style>
+{% endblock %}

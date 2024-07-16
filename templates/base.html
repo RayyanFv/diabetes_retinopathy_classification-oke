@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Diabetic Retinopathy Classification Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f4f4f4;
+            overflow: hidden;
+        }
+        .navbar {
+            background-color: #002D72;
+            width: 100%;
+            z-index: 1000;
+            position: fixed;
+            top: 0;
+        }
+        .navbar-brand h3 {
+            font-size: 1.5rem;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 0;
+        }
+        .sidebar {
+            background-color: #002D72;
+            padding: 20px;
+            width: 220px;
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            top: 56px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        .sidebar img {
+            width: 150px;
+            margin-bottom: 10px;
+        }
+        .sidebar h3 {
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            text-decoration: none;
+            color: #ffffff;
+            padding: 10px 15px;
+            margin: 5px 0;
+            background-color: #005BBB;
+            border-radius: 5px;
+            text-align: center;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar a:hover {
+            background-color: #0048A5;
+        }
+        .sidebar i {
+            margin-right: 8px;
+        }
+        .content-wrapper {
+            margin-left: 240px;
+            margin-top: 56px;
+            height: calc(100% - 56px);
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .jumbotron {
+            background: linear-gradient(to right, #002D72, #005BBB);
+            color: white;
+        }
+        .featurette-heading {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">
+            <h3>RetinoCapture</h3>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+    <div class="sidebar" id="sidebar">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+        <h3>RetinoCapture</h3>
+        <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
+        <a href="{{ url_for('analysis') }}"><i class="fas fa-chart-line"></i> Analysis</a>
+        <a href="{{ url_for('upload') }}"><i class="fas fa-upload"></i> Upload Image</a>
+        <a href="{{ url_for('send_user') }}"><i class="fas fa-user"></i> Send User</a>
+        <a href="{{ url_for('faq') }}"><i class="fas fa-question-circle"></i> FAQ</a>
+        <a href="{{ url_for('chat', other_user_id='') }}"><i class="fas fa-comments"></i> Chat</a>
+        <a href="{{ url_for('send_recommendation') }}"><i class="fas fa-lightbulb"></i> Send Recommendation</a>
+    </div>
+    <div class="content-wrapper" id="content">
+        {% block content %}{% endblock %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Handle authentication state changes
+        auth.onAuthStateChanged(user => {
+          if (user) {
+            console.log("User is signed in:", user.email);
+          } else {
+            console.log("User is signed out");
+          }
+        });
+
+        // Sign in function
+        async function signIn(email, password) {
+          try {
+            const authResult = await auth.signInWithEmailAndPassword(email, password);
+            console.log("Signed in successfully");
+            window.location.href = "{{ url_for('index') }}";
+          } catch (error) {
+            console.error("Error signing in:", error.message);
+          }
+        }
+
+        // Register function
+        async function register(email, password, username) {
+          try {
+            const authResult = await auth.createUserWithEmailAndPassword(email, password);
+            console.log("Registered successfully");
+            await db.collection('users').doc(authResult.user.uid).set({
+              email: email,
+              uid: authResult.user.uid,
+              username: username
+            });
+            window.location.href = "{{ url_for('index') }}";
+          } catch (error) {
+            console.error("Error registering:", error.message);
+          }
+        }
+
+        // Sign out function
+        async function signOutUser() {
+          try {
+            await auth.signOut();
+            console.log("Signed out successfully");
+            window.location.href = "{{ url_for('login') }}";
+          } catch (error) {
+            console.error("Error signing out:", error.message);
+          }
+        }
+    </script>
+</body>
+</html>

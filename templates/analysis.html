@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis - Diabetic Retinopathy Classification Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Analysis</h1>
+    <div>
+        <h2>Real-Time Analysis using Camera</h2>
+        <div>
+            <img src="{{ url_for('video_feed') }}" width="640" height="480">
+        </div>
+    </div>
+</div>
+{% endblock %}

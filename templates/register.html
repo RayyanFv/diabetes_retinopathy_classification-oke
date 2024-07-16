@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="{{ url_for('static', filename='js/firebase_config.js') }}"></script>
+    <script>
+        function validateEmail(email) {
+            var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        function register() {
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirm-password').value;
+
+            if (!validateEmail(email)) {
+                showAlert('The email address is badly formatted.', 'danger');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('Passwords do not match.', 'danger');
+                return;
+            }
+
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    var form = document.createElement('form');
+                    form.setAttribute('method', 'post');
+                    form.setAttribute('action', '/register');
+                    var hiddenEmail = document.createElement('input');
+                    hiddenEmail.setAttribute('type', 'hidden');
+                    hiddenEmail.setAttribute('name', 'email');
+                    hiddenEmail.setAttribute('value', email);
+                    form.appendChild(hiddenEmail);
+                    var hiddenPassword = document.createElement('input');
+                    hiddenPassword.setAttribute('type', 'hidden');
+                    hiddenPassword.setAttribute('name', 'password');
+                    hiddenPassword.setAttribute('value', password);
+                    form.appendChild(hiddenPassword);
+                    document.body.appendChild(form);
+                    form.submit();
+                })
+                .catch((error) => {
+                    console.error('Error: ', error);
+                    showAlert('Registration failed: ' + error.message, 'danger');
+                });
+        }
+
+        function showAlert(message, type) {
+            var alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            `;
+            document.getElementById('alert-container').appendChild(alertDiv);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h1 class="text-center mt-5">Register</h1>
+                <div id="alert-container"></div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" class="form-control" placeholder="Email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" class="form-control" placeholder="Password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <input type="password" id="confirm-password" class="form-control" placeholder="Confirm Password" required>
+                        </div>
+                        <button class="btn btn-primary btn-block" onclick="register()">Register</button>
+                    </div>
+                </div>
+                <p class="text-center mt-3">Already have an account? <a href="{{ url_for('login') }}">Login here</a>.</p>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

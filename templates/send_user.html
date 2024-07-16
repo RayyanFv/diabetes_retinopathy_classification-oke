@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Select User - Diabetic Retinopathy Classification Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4">Select User to Chat</h1>
+    <div id="user-list"></div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCGVOkrrWF0x9_TQzEeNLY9YjXlWQCZwNo",
+        authDomain: "my-untitled-project-a490d.firebaseapp.com",
+        projectId: "my-untitled-project-a490d",
+        storageBucket: "my-untitled-project-a490d.appspot.com",
+        messagingSenderId: "254402062831",
+        appId: "1:254402062831:web:0ad7ebf2e1999f41d66e1a",
+        measurementId: "G-TC1XP8Z7GL"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    db.collection('users').get().then((querySnapshot) => {
+        const userList = document.getElementById('user-list');
+        querySnapshot.forEach((doc) => {
+            const user = doc.data();
+            const userCard = document.createElement('div');
+            userCard.classList.add('card', 'mt-3');
+            userCard.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${user.username}</h5>
+                    <p class="card-text">${user.email}</p>
+                    <a href="/chat/${doc.id}" class="btn btn-primary">Chat</a>
+                </div>
+            `;
+            userList.appendChild(userCard);
+        });
+    });
+</script>
+{% endblock %}
